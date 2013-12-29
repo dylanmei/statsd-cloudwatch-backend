@@ -1,7 +1,7 @@
 {
   "name": "statsd-cloudwatch-backend",
   "description": "A StatsD backend for Amazon's AWS CloudWatch.",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "author": {
     "name": "Dylan Meissner",
     "url": "http://github.com/dylanmei"

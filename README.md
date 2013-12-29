@@ -1,7 +1,6 @@
 # StatsD CloudWatch Backend
 
-This is a pluggable backend for [StatsD](https://github.com/etsy/statsd), which
-publishes stats to [Amazon CloudWatch](http://aws.amazon.com/cloudwatch/).
+This is a pluggable backend for [StatsD](https://github.com/etsy/statsd). It publishes stats to [Amazon CloudWatch](http://aws.amazon.com/cloudwatch/).
 
 ## Requirements
 
@@ -15,7 +14,13 @@ publishes stats to [Amazon CloudWatch](http://aws.amazon.com/cloudwatch/).
 
 ## Configuration
 
-You will add the following basic configuration information to your StatsD config file.
+Add `statsd-cloudwatch-backend` to the list of StatsD backends in the StatsD configuration file:
+
+    {
+        backends: ["statsd-cloudwatch-backend"]
+    }
+
+Add the following basic configuration information to your StatsD config file.
 
     {
         cloudwatch: {
@@ -30,12 +35,3 @@ You will add the following basic configuration information to your StatsD config
 
 The *namespace*, and *region* settings are required. The *dimensions* structure is optional. The *accessKeyId* and *secretAccessKey* settings are not required if the EC2 instance is configured with an instance-profile with permissions to write to CloudWatch.
 
-## Enabling
-
-Add the `statsd-cloudwatch-backend` backend to the list of StatsD backends in the StatsD configuration file:
-
-    {
-        backends: ["statsd-cloudwatch-backend"]
-    }
-
-Start/restart the statsd daemon and your StatsD metrics should now be pushed to your AWS CloudWatch service.
