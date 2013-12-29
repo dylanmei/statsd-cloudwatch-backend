@@ -4,7 +4,7 @@ var Fake = module.exports = {
   CloudWatch: function() {
     this.Namespace = ''
     this.MetricData = []
-  }
+  },
 }
 
 _.extend(Fake.CloudWatch.prototype, {
