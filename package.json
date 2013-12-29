@@ -1,0 +1,33 @@
+{
+  "name": "statsd-cloudwatch-backend",
+  "description": "A StatsD backend for Amazon's AWS CloudWatch.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Dylan Meissner",
+    "url": "http://github.com/dylanmei"
+  },
+  "repository" : {
+    "type": "git",
+    "url": "git://github.com/dylanmei/statsd-cloudwatch-backend.git"
+  },
+  "main": "lib/init.js",
+  "dependencies": {
+    "fmt": "~0.4",
+    "underscore": "1.4.x",
+    "aws-sdk": "2.0.x"
+  },
+  "devDependencies": {
+    "chai": "~1.4.2",
+    "mocha": "*"
+  },
+  "optionalDependencies": {},
+  "scripts": {
+    "test": "make test"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "keywords": [
+    "aws", "amazon", "statsd", "cloudwatch", "backend"
+  ]
+}
