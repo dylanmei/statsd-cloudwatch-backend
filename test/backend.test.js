@@ -38,7 +38,7 @@ describe('flush with no metrics', function() {
 })
 
 describe('flushing counters', function() {
-  var counter = null
+  var metric = null
   var cloudwatch = new Fake.CloudWatch()
   var backend = new Backend({
     client: cloudwatch, namespace: 'abc.123', dimensions: { 'InstanceId': 'i-xyz' }
@@ -46,11 +46,9 @@ describe('flushing counters', function() {
 
   beforeEach(function() {
     backend.flush(Fixture.timestamp, {
-      counters: Fixture.counters
+      counters: Fixture.counters, timers: {}
     })
-    counter = _.find(cloudwatch.MetricData, function(c) {
-      return c.MetricName == 'api.requests'
-    })
+    metric = _.first(cloudwatch.MetricData)
   })
 
   it('should send a namespace', function() {
@@ -58,7 +56,27 @@ describe('flushing counters', function() {
   })
 
   it('should send a counter', function() {
-    expect(counter).to.exist
+    expect(metric).to.exist
+    expect(metric.Unit).to.equal('Count')
+  })
+
+  it('should send a metric name', function() {
+    expect(metric.MetricName).to.equal('api.request_count')
+  })
+
+  it('should send a count', function() {
+    expect(metric.Value).to.equal(100)
+  })
+
+  it('should send a timestamp', function() {
+    expect(metric.Timestamp.getTime()).to.equal(Fixture.now.getTime())
+  })
+
+  it('should send a dimension', function() {
+    var dimensions = metric.Dimensions
+    expect(dimensions).to.have.length(1)
+    expect(dimensions[0]['Name']).to.equal('InstanceId')
+    expect(dimensions[0]['Value']).to.equal('i-xyz')
   })
 
   it('should not send a statsd counter', function() {
@@ -67,28 +85,59 @@ describe('flushing counters', function() {
     })
     expect(counters).to.have.length(0)
   })
+})
+
+describe('flusing timers', function() {
+  var metric = null
+  var cloudwatch = new Fake.CloudWatch()
+  var backend = new Backend({
+    client: cloudwatch, namespace: 'abc.123', dimensions: { 'InstanceId': 'i-xyz' }
+  })
+
+  beforeEach(function() {
+    backend.flush(Fixture.timestamp, {
+      timers: Fixture.timers, counters: {}
+    })
+    metric = _.first(cloudwatch.MetricData)
+  })
+
+  it('should send a namespace', function() {
+    expect(cloudwatch.Namespace).to.equal('abc.123')
+  })
+
+  it('should send a timer', function() {
+    expect(metric).to.exist
+    expect(metric.Unit).to.equal('Milliseconds')
+  })
 
   it('should send a metric name', function() {
-    expect(counter.MetricName).to.equal('api.requests')
+    expect(metric.MetricName).to.equal('api.request_time')
   })
 
-  it('should send a metric value', function() {
-    expect(counter.Value).to.equal(100)
+  it('should send a sum', function() {
+    expect(metric.StatisticValues.Sum).to.equal(10)
   })
 
-  it('should send a metric timestamp', function() {
-    expect(counter.Timestamp.getTime()).to.equal(Fixture.now.getTime())
+  it('should send a min', function() {
+    expect(metric.StatisticValues.Minimum).to.equal(0)
   })
 
-  it('should send a metric unit', function() {
-    expect(counter.Unit).to.equal('Count')
+  it('should send a max', function() {
+    expect(metric.StatisticValues.Maximum).to.equal(4)
   })
 
-  it('should send a metric dimension', function() {
-    var dimensions = counter.Dimensions
+  it('should send a sample count', function() {
+    expect(metric.StatisticValues.SampleCount).to.equal(5)
+  })
+
+  it('should send a timestamp', function() {
+    expect(metric.Timestamp.getTime()).to.equal(Fixture.now.getTime())
+  })
+
+  it('should send a dimension', function() {
+    var dimensions = metric.Dimensions
     expect(dimensions).to.have.length(1)
     expect(dimensions[0]['Name']).to.equal('InstanceId')
     expect(dimensions[0]['Value']).to.equal('i-xyz')
   })
 })
-

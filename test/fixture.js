@@ -6,6 +6,9 @@ module.exports = {
   counters: {
     'statsd.bad_lines_seen': 0,
     'statsd.packets_received': 50,
-    'api.requests': 100
-  }
+    'api.request_count': 100,
+  },
+  timers: {
+    'api.request_time': [0, 1, 2, 3, 4]
+  },
 }

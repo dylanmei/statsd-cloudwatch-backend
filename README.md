@@ -1,6 +1,10 @@
 # StatsD CloudWatch Backend
 
-This is a pluggable backend for [StatsD](https://github.com/etsy/statsd). It publishes stats to [Amazon CloudWatch](http://aws.amazon.com/cloudwatch/).
+This is a pluggable backend for [StatsD](https://github.com/etsy/statsd). It publishes stats to [Amazon's AWS CloudWatch](http://aws.amazon.com/cloudwatch/).
+
+Be aware that AWS CloudWatch metrics are not free and the cost can quickly become prohibative. *Pricing details: [Amazon CloudWatch Pricing](http://aws.amazon.com/cloudwatch/pricing/).* This may be a good choice if your needs are simple and/or as a means of quickly getting off the ground, as setting up [Graphite](http://graphite.wikidot.com/) in EC2 is not trivial.
+
+*Counters* and *Timers* are supported. *Sets* and *Guages* are not yet implemented.
 
 ## Requirements
 
@@ -12,15 +16,16 @@ This is a pluggable backend for [StatsD](https://github.com/etsy/statsd). It pub
     $ cd /path/to/statsd
     $ npm install statsd-cloudwatch-backend
 
+
 ## Configuration
 
-Add `statsd-cloudwatch-backend` to the list of StatsD backends in the StatsD configuration file:
+Add `statsd-cloudwatch-backend` to the list of backends in the StatsD configuration file:
 
     {
         backends: ["statsd-cloudwatch-backend"]
     }
 
-Add the following basic configuration information to your StatsD config file.
+Add the following basic configuration information to the StatsD configuration file.
 
     {
         cloudwatch: {
@@ -32,6 +37,4 @@ Add the following basic configuration information to your StatsD config file.
         }
     }
 
-
 The *namespace*, and *region* settings are required. The *dimensions* structure is optional. The *accessKeyId* and *secretAccessKey* settings are not required if the EC2 instance is configured with an instance-profile with permissions to write to CloudWatch.
-
