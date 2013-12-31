@@ -2,9 +2,12 @@
 
 This is a pluggable backend for [StatsD](https://github.com/etsy/statsd). It publishes stats to [Amazon's AWS CloudWatch](http://aws.amazon.com/cloudwatch/).
 
-Be aware that AWS CloudWatch metrics are not free and the cost can quickly become prohibative. *Pricing details: [Amazon CloudWatch Pricing](http://aws.amazon.com/cloudwatch/pricing/).* This may be a good choice if your needs are simple and/or as a means of quickly getting off the ground, as setting up [Graphite](http://graphite.wikidot.com/) in EC2 is not trivial.
+[![wercker status](https://app.wercker.com/status/58736e11e8e13ee79479cd1678cb2fb3/m "wercker status")](https://app.wercker.com/project/bykey/58736e11e8e13ee79479cd1678cb2fb3)
 
 *Counters*, *Gauges*, and *Timers* are supported. *Sets* are not implemented.
+
+Be aware that AWS CloudWatch metrics are not free and the cost can quickly become prohibative. *Pricing details: [Amazon CloudWatch Pricing](http://aws.amazon.com/cloudwatch/pricing/).* This may be a good choice if your needs are simple and/or as a means of quickly getting off the ground, as setting up [Graphite](http://graphite.wikidot.com/) in EC2 is not trivial.
+
 
 ## Requirements
 
@@ -37,4 +40,4 @@ Add the following basic configuration information to the StatsD configuration fi
         }
     }
 
-The *namespace*, and *region* settings are required. The *dimensions* structure is optional. The *accessKeyId* and *secretAccessKey* settings are not required if the EC2 instance is configured with an instance-profile with permissions to write to CloudWatch.
+The *namespace*, and *region* settings are required. The *dimensions* map is optional. The *accessKeyId* and *secretAccessKey* settings are not required if the EC2 instance is configured with an instance-profile with permissions to write to CloudWatch.
