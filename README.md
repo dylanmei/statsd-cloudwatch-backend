@@ -4,7 +4,7 @@ This is a pluggable backend for [StatsD](https://github.com/etsy/statsd). It pub
 
 Be aware that AWS CloudWatch metrics are not free and the cost can quickly become prohibative. *Pricing details: [Amazon CloudWatch Pricing](http://aws.amazon.com/cloudwatch/pricing/).* This may be a good choice if your needs are simple and/or as a means of quickly getting off the ground, as setting up [Graphite](http://graphite.wikidot.com/) in EC2 is not trivial.
 
-*Counters* and *Timers* are supported. *Sets* and *Guages* are not yet implemented.
+*Counters*, *Gauges*, and *Timers* are supported. *Sets* are not implemented.
 
 ## Requirements
 

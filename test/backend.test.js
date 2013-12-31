@@ -27,9 +27,7 @@ describe('flush with no metrics', function() {
   })
 
   beforeEach(function() {
-    backend.flush(Fixture.timestamp, {
-      counters: {}, timers: {}, guages: {}, sets: {}
-    })
+    backend.flush(Fixture.timestamp, {})
   })
 
   it('should not send counters', function() {
@@ -46,7 +44,7 @@ describe('flushing counters', function() {
 
   beforeEach(function() {
     backend.flush(Fixture.timestamp, {
-      counters: Fixture.counters, timers: {}
+      counters: Fixture.counters
     })
     metric = _.first(cloudwatch.MetricData)
   })
@@ -96,7 +94,7 @@ describe('flusing timers', function() {
 
   beforeEach(function() {
     backend.flush(Fixture.timestamp, {
-      timers: Fixture.timers, counters: {}
+      timers: Fixture.timers
     })
     metric = _.first(cloudwatch.MetricData)
   })
@@ -139,5 +137,55 @@ describe('flusing timers', function() {
     expect(dimensions).to.have.length(1)
     expect(dimensions[0]['Name']).to.equal('InstanceId')
     expect(dimensions[0]['Value']).to.equal('i-xyz')
+  })
+})
+
+describe('flushing gauges', function() {
+  var metric = null
+  var cloudwatch = new Fake.CloudWatch()
+  var backend = new Backend({
+    client: cloudwatch, namespace: 'abc.123', dimensions: { 'InstanceId': 'i-xyz' }
+  })
+
+  beforeEach(function() {
+    backend.flush(Fixture.timestamp, {
+      gauges: Fixture.gauges
+    })
+    metric = _.first(cloudwatch.MetricData)
+  })
+
+  it('should send a namespace', function() {
+    expect(cloudwatch.Namespace).to.equal('abc.123')
+  })
+
+  it('should send a gauge', function() {
+    expect(metric).to.exist
+    expect(metric.Unit).to.equal('None')
+  })
+
+  it('should send a metric name', function() {
+    expect(metric.MetricName).to.equal('api.num_sessions')
+  })
+
+  it('should send a value', function() {
+    expect(metric.Value).to.equal(50)
+  })
+
+  it('should send a timestamp', function() {
+    expect(metric.Timestamp.getTime()).to.equal(Fixture.now.getTime())
+  })
+
+  it('should send a dimension', function() {
+    var dimensions = metric.Dimensions
+    expect(dimensions).to.have.length(1)
+    expect(dimensions[0]['Name']).to.equal('InstanceId')
+    expect(dimensions[0]['Value']).to.equal('i-xyz')
+  })
+
+  it('should not send a statsd gauge', function() {
+    var gauges = _.filter(cloudwatch.MetricData, function(c) {
+      return c.MetricName.indexOf('statsd.') == 0
+    })
+    expect(gauges).to.have.length(0)
   })
 })
