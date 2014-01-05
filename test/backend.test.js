@@ -18,6 +18,10 @@ describe('new backend', function() {
   it('should have a dimensions array', function() {
     expect(backend.dimensions).to.have.length(0)
   })
+
+  it('should have stats', function() {
+    expect(backend.stats).to.not.be.empty
+  })
 })
 
 describe('flush with no metrics', function() {
@@ -187,5 +191,33 @@ describe('flushing gauges', function() {
       return c.MetricName.indexOf('statsd.') == 0
     })
     expect(gauges).to.have.length(0)
+  })
+})
+
+describe('status', function() {
+  var cloudwatch = new Fake.CloudWatch()
+  var backend = new Backend({
+    client: cloudwatch, namespace: 'abc.123'
+  }, 123)
+
+  var backend_name, backend_status = {}
+
+  beforeEach(function() {
+    backend.status(function(err, name, key, value) {
+      backend_name = name
+      backend_status[key] = value
+    })
+  })
+
+  it('should provide a backend name', function() {
+    expect(backend_name).to.equal('cloudwatch')
+  })
+
+  it('should report a last_flush', function() {
+    expect(backend_status.last_flush).to.equal(123)
+  })
+
+  it('should report a last_exception', function() {
+    expect(backend_status.last_exception).to.equal(123)
   })
 })
