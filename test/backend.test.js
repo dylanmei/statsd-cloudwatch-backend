@@ -53,8 +53,8 @@ describe('flush with too many metrics', function() {
 
   it('should break metrics into 2 calls to Cloudwatch', function() {
     expect(cloudwatch.params).to.have.length(2)
-    expect(cloudwatch.params[0]).to.have.length(20)
-    expect(cloudwatch.params[1]).to.have.length(20)
+    expect(cloudwatch.params[0].MetricData).to.have.length(20)
+    expect(cloudwatch.params[1].MetricData).to.have.length(1)
   })
 })
 
