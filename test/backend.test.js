@@ -39,24 +39,24 @@ describe('flush with no metrics', function() {
   })
 })
 
-//describe('flush with too many metrics', function() {
-//  var metrics = []
-//  var cloudwatch = new Fake.CloudWatch()
-//  var backend = new Backend({
-//    client: cloudwatch, namespace: 'abc.123'
-//  })
-//
-//  beforeEach(function() {
-//    backend.flush(Fixture.timestamp, {
-//      counters: Fixture.manyCounters
-//    })
-//    metrics = cloudwatch.MetricData
-//  })
-//
-//  it('should break metrics into 2 calls to Cloudwatch', function() {
-//    expect(metrics).to.have.length(2)
-//  })
-//})
+describe('flush with too many metrics', function() {
+  var cloudwatch = new Fake.CloudWatch()
+  var backend = new Backend({
+    client: cloudwatch, namespace: 'abc.123'
+  })
+
+  beforeEach(function() {
+    backend.flush(Fixture.timestamp, {
+      counters: Fixture.manyCounters
+    })
+  })
+
+  it('should break metrics into 2 calls to Cloudwatch', function() {
+    expect(cloudwatch.params).to.have.length(2)
+    expect(cloudwatch.params[0]).to.have.length(20)
+    expect(cloudwatch.params[1]).to.have.length(20)
+  })
+})
 
 describe('flushing counters', function() {
   var metric = null
