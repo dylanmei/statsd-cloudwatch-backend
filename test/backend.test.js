@@ -35,7 +35,26 @@ describe('flush with no metrics', function() {
   })
 
   it('should not send counters', function() {
-    expect(cloudwatch.MetricData).to.have.length(0)
+    expect(cloudwatch.params).to.have.length(0)
+  })
+})
+
+describe('flush with too many metrics', function() {
+  var cloudwatch = new Fake.CloudWatch()
+  var backend = new Backend({
+    client: cloudwatch, namespace: 'abc.123'
+  })
+
+  beforeEach(function() {
+    backend.flush(Fixture.timestamp, {
+      counters: Fixture.manyCounters
+    })
+  })
+
+  it('should break metrics into 2 calls to Cloudwatch', function() {
+    expect(cloudwatch.params).to.have.length(2)
+    expect(cloudwatch.params[0].MetricData).to.have.length(20)
+    expect(cloudwatch.params[1].MetricData).to.have.length(1)
   })
 })
 
@@ -50,11 +69,11 @@ describe('flushing counters', function() {
     backend.flush(Fixture.timestamp, {
       counters: Fixture.counters
     })
-    metric = _.first(cloudwatch.MetricData)
+    metric = _.first(_.first(cloudwatch.params).MetricData)
   })
 
   it('should send a namespace', function() {
-    expect(cloudwatch.Namespace).to.equal('abc.123')
+    expect(cloudwatch.params[0].Namespace).to.equal('abc.123')
   })
 
   it('should send a counter', function() {
@@ -82,14 +101,14 @@ describe('flushing counters', function() {
   })
 
   it('should not send a statsd counter', function() {
-    var counters = _.filter(cloudwatch.MetricData, function(c) {
+    var counters = _.filter(_.first(cloudwatch.params).MetricData, function(c) {
       return c.MetricName.indexOf('statsd.') == 0
     })
     expect(counters).to.have.length(0)
   })
 })
 
-describe('flusing timers', function() {
+describe('flushing timers', function() {
   var metric = null
   var cloudwatch = new Fake.CloudWatch()
   var backend = new Backend({
@@ -100,11 +119,11 @@ describe('flusing timers', function() {
     backend.flush(Fixture.timestamp, {
       timers: Fixture.timers
     })
-    metric = _.first(cloudwatch.MetricData)
+    metric = _.first(cloudwatch.params[0].MetricData)
   })
 
   it('should send a namespace', function() {
-    expect(cloudwatch.Namespace).to.equal('abc.123')
+    expect(cloudwatch.params[0].Namespace).to.equal('abc.123')
   })
 
   it('should send a timer', function() {
@@ -155,11 +174,11 @@ describe('flushing gauges', function() {
     backend.flush(Fixture.timestamp, {
       gauges: Fixture.gauges
     })
-    metric = _.first(cloudwatch.MetricData)
+    metric = _.first(cloudwatch.params[0].MetricData)
   })
 
   it('should send a namespace', function() {
-    expect(cloudwatch.Namespace).to.equal('abc.123')
+    expect(cloudwatch.params[0].Namespace).to.equal('abc.123')
   })
 
   it('should send a gauge', function() {
