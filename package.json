@@ -7,7 +7,7 @@
     "email": "dylanmei@gmail.com",
     "url": "http://github.com/dylanmei"
   },
-  "repository" : {
+  "repository": {
     "type": "git",
     "url": "https://github.com/dylanmei/statsd-cloudwatch-backend.git"
   },
@@ -19,16 +19,22 @@
   },
   "devDependencies": {
     "chai": "~1.4.2",
-    "mocha": "*"
+    "mocha": "*",
+    "statsd": "^0.7.2"
   },
   "optionalDependencies": {},
   "scripts": {
+    "start": "make start",
     "test": "make test"
   },
   "engines": {
     "node": "*"
   },
   "keywords": [
-    "aws", "amazon", "statsd", "cloudwatch", "backend"
+    "aws",
+    "amazon",
+    "statsd",
+    "cloudwatch",
+    "backend"
   ]
 }
